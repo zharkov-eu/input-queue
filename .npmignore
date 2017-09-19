@@ -1,0 +1,50 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Compiled binary addons (http://nodejs.org/api/addons.html)
+build/Release
+
+# Dependency directories
+node_modules/
+
+# Public img directory
+public/build/
+
+# Typescript v1 declaration files
+typings/
+
+# Optional npm cache directory
+.npm
+
+# Output of 'npm pack'
+*.tgz
+
+# dotenv environment variables file
+.env
+
+# idea
+.idea
+
+# vs
+.vs
+
+# TypeScript Source files
+*.ts
+!*.d.ts
+/nbproject/private/
+tsconfig.json
+tslint.json
+
+# Test files
+test/
+
+# Generated js.map
+*.js.map

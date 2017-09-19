@@ -1,0 +1,27 @@
+{
+  "name": "input-queue",
+  "version": "0.0.1",
+  "description": "Валидация входящих данных с веб-форм, распознание дублей и спам-трафика",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zharkov-eu/input-queue.git"
+  },
+  "author": "Operative Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zharkov-eu/input-queue/issues"
+  },
+  "homepage": "https://github.com/zharkov-eu/input-queue#readme",
+  "devDependencies": {
+    "@types/mocha": "^2.2.43",
+    "@types/node": "^8.0.28",
+    "mocha": "^3.5.3"
+  }
+}
