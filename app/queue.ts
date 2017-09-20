@@ -34,6 +34,7 @@ class TaskQueue {
     }
   }
 
+  // TODO: Очистка очереди по временному параметру
   public pop(): IQueueElement {
     this.queue.pop();
     const queueLength: number = this.checkQueue.length;
@@ -45,6 +46,8 @@ class TaskQueue {
     return this.queue.length === 0;
   }
 
+  // TODO: checkEquality по всей длине текущей очереди
+  // TODO: проверка совпадений по хэшу
   private checkEquality(queueElement: IQueueElement): boolean {
     const queueLength: number = this.checkQueue.length;
     for (let i: number = queueLength - 10; i < queueLength; i++) {
