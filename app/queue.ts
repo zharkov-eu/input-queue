@@ -27,7 +27,7 @@ export class DuplicateError extends Error {
   }
 }
 
-class TaskQueue {
+class Queue {
   private checkQueue: IQueueElement[];
   private logger?: ILogger;
 
@@ -75,11 +75,10 @@ class TaskQueue {
   }
 }
 
-export default class TaskEmitter extends EventEmitter {
-  private queue: TaskQueue;
+export class TaskQueue {
+  private queue: Queue;
   constructor() {
-    super();
-    this.queue = new TaskQueue();
+    this.queue = new Queue();
   }
 
   /**
