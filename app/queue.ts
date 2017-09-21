@@ -17,13 +17,21 @@ interface IQueueElement {
   element: object;
 }
 
+export class DuplicateError extends Error {
+  public task: object;
+
+  constructor(message, task) {
+    super(message);
+    this.task = task;
+    Object.setPrototypeOf(this, DuplicateError.prototype);
+  }
+}
+
 class TaskQueue {
   private checkQueue: IQueueElement[];
-  private queue: IQueueElement[];
   private logger?: ILogger;
 
   constructor(logger?: ILogger) {
-    this.queue = [];
     this.checkQueue = [];
     this.logger = logger || null;
   }
@@ -34,26 +42,24 @@ class TaskQueue {
       timestamp: Date.now(),
     };
     if (!this.checkEquality(queueElement)) {
-      this.queue.push(queueElement);
       this.checkQueue.push(queueElement);
     } else {
       if (this.logger && typeof this.logger.error === "function") {
         this.logger.error(`CheckEquality returned true: ${JSON.stringify(queueElement)}`);
       }
-      throw new Error();
+      throw new DuplicateError("InputQueue: CheckEquality returned true", queueElement);
     }
   }
 
   // TODO: Очистка очереди по временному параметру
   public pop(): IQueueElement {
-    this.queue.pop();
     const queueLength: number = this.checkQueue.length;
     if (queueLength > 10) { this.checkQueue.shift(); }
     return queueLength ? this.checkQueue[queueLength - 1] : null;
   }
 
   public empty(): boolean {
-    return this.queue.length === 0;
+    return this.checkQueue.length === 0;
   }
 
   // TODO: checkEquality по всей длине текущей очереди
@@ -76,15 +82,16 @@ export default class TaskEmitter extends EventEmitter {
     this.queue = new TaskQueue();
   }
 
-  public taskHandle(task: object, handler: (error: Error, element: object) => any): void {
-    try {
-      this.queue.push(task);
-      while (!this.queue.empty()) {
-        const queueElement: IQueueElement = this.queue.pop();
-        handler(null, queueElement.element);
-      }
-    } catch (error) {
-        handler(error, task);
+  /**
+   * Обработать задачу
+   * Выбрасывает исключение DuplicateError
+   * @param {Object} task
+   * @returns {Object}
+   */
+  public taskHandle(task: object): object {
+    this.queue.push(task);
+    if (!this.queue.empty()) {
+      return this.queue.pop().element;
     }
   }
 }
