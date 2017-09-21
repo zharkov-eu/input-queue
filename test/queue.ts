@@ -13,7 +13,8 @@ import Queue from "../app/queue";
 const queue = new Queue();
 
 function taskHandler(queuedElements: object[]) {
-  return (element: object, timestamp: number) => {
+  return (error: Error, element: object) => {
+    if (error) { return; }
     queuedElements.push(element);
   };
 }
