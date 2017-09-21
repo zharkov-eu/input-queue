@@ -6,8 +6,11 @@
 
 "use strict";
 
-import * as crypto from "crypto";
 import {EventEmitter} from "events";
+
+interface ILogger {
+  error: (message: any) => void;
+}
 
 interface IQueueElement {
   timestamp: number;
@@ -17,10 +20,12 @@ interface IQueueElement {
 class TaskQueue {
   private checkQueue: IQueueElement[];
   private queue: IQueueElement[];
+  private logger?: ILogger;
 
-  constructor() {
+  constructor(logger?: ILogger) {
     this.queue = [];
     this.checkQueue = [];
+    this.logger = logger || null;
   }
 
   public push(unit: object): void {
@@ -31,6 +36,11 @@ class TaskQueue {
     if (!this.checkEquality(queueElement)) {
       this.queue.push(queueElement);
       this.checkQueue.push(queueElement);
+    } else {
+      if (this.logger && typeof this.logger.error === "function") {
+        this.logger.error(`CheckEquality returned true: ${JSON.stringify(queueElement)}`);
+      }
+      throw new Error();
     }
   }
 
@@ -66,11 +76,15 @@ export default class TaskEmitter extends EventEmitter {
     this.queue = new TaskQueue();
   }
 
-  public taskHandle(task: object, handler: (element: object, timestamp: number) => any): void {
-    this.queue.push(task);
-    while (!this.queue.empty()) {
-      const queueElement: IQueueElement = this.queue.pop();
-      handler(queueElement.element, queueElement.timestamp);
+  public taskHandle(task: object, handler: (error: Error, element: object) => any): void {
+    try {
+      this.queue.push(task);
+      while (!this.queue.empty()) {
+        const queueElement: IQueueElement = this.queue.pop();
+        handler(null, queueElement.element);
+      }
+    } catch (error) {
+        handler(error, task);
     }
   }
 }
